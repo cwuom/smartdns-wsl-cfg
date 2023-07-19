@@ -110,9 +110,8 @@ MIIECjCCA5CgAwIBAgIPFnF4E352XmBwlKrjuQo4MAoGCCqGSM49BAMDMEsxCzAJ
 
 
 ### 需要记下的信息
-```
-"/root/.acme.sh/[你的域名]_ecc/fullchain.cer", "/root/.acme.sh/[你的域名]_ecc/[你的域名].key"
-```
+- /root/.acme.sh/[你的域名]_ecc/fullchain.cer
+- /root/.acme.sh/[你的域名]_ecc/[你的域名].key
 
 
 ## 4. 替换配置文件
