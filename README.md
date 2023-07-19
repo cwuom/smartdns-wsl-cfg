@@ -23,7 +23,6 @@ apt-get update
 ```
 
 ## 2.  安装环境
-### 必须安装的包
 ``` shell
 apt install vim -y
 apt install smartdns -y
