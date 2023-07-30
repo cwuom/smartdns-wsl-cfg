@@ -1,4 +1,5 @@
 
+
 # Debian系统 smartdns 配置教程，基于WSL
 #### author: bilibili@im-cwuom | date: 2023/7/17
 
@@ -516,3 +517,7 @@ function FindProxyForURL(url, host) {
 
 ### 证书问题、不安全的站点
 - 请到此项目原作者写的的[FAQ · URenko/Accesser Wiki (github.com)](https://github.com/URenko/Accesser/wiki/FAQ)中查看
+
+
+# 误区
+请注意，部署这些≠梯子。您的IP自始至终都不会改变，上述操作只能加速国内外网站的解析速度，例如google.com依旧无法直接访问，www.google.com.hk的连接稳定性也不好保证。制作这个的目的还是为了防止污染让一些本该能正常访问的境外服务能够直连，而不是用来专门看外网的工具（这就是为什么还要设置国内DNS）
