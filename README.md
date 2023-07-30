@@ -2,7 +2,6 @@
 # Debian系统 smartdns 配置教程，基于WSL
 #### author: bilibili@im-cwuom | date: 2023/7/17
 
-
 # 如何部署?
 ## 1. 配置中科大镜像源
 ``` shell
@@ -21,6 +20,8 @@ EOF
 ``` shell
 apt-get update
 ```
+
+> 中科大源不是必须的，如果你网的质量比较好甚至可以用默认镜像，若其他源有更快的下载速度，可使用其他源替代。
 
 ## 2.  安装环境
 ``` shell
@@ -42,19 +43,21 @@ cd ./acme.sh
 alias acme.sh=~/.acme.sh/acme.sh
 ```
 
-### 配置阿里云账号AccessKey
+### 配置阿里云账号AccessKey，其他平台购入的域名请自行检索相关页面。
 ``` shell
 export Ali_Key="sddiwjedfasSDFSFsdaf"
 export Ali_Secret="jlsdsddiwjedfasSDFSFkljlfdsaklkjflsa"
 ```
 
 > 阿里云账号AccessKey申请地址: https://usercenter.console.aliyun.com/#/manage/ak
+> 腾讯云请参考文章: [如何获取阿里云、腾讯云Access Key - 简书 (jianshu.com)](https://www.jianshu.com/p/ac489e7e779f)
 
 
 ### 验证域名所有权
 ``` shell
 acme.sh --issue --dns dns_ali -d [你的域名] -d *.[你的域名] --dnssleep
 ```
+> 腾讯云请参考文章: [使用acme.sh申请Let's Encrypt免费的SSL证书-腾讯云开发者社区-腾讯云 (tencent.com)](https://cloud.tencent.com/developer/article/1877928)
 
 ### 成功返回示例
 ```
@@ -325,6 +328,7 @@ nameserver /www.apple.com.edgekey.net/china
 nameserver /www.apple.com/china
 EOF
 ```
+> 上述配置文件可能比较杂乱，有能力的建议自己根据使用场景整理一份。
 
 ## 5. 重启服务
 ``` shell
@@ -388,3 +392,127 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 1500
 wsl -l -v
 wsl --set-version <distribution name> 1
 ```
+
+### 对网络有什么要求吗？
+有，使用请先行前往路由器/光猫管理界面开启IPv4/v6的支持。纯IPv4可能无法直接访问Google之类解析返回为纯IPv6地址的网站。
+
+# 进阶
+## 绕过SNI阻断
+这里只是常见问题，更多信息请前往[URenko/Accesser: 🌏一个解决SNI RST导致维基百科、Pixiv等站点无法访问的工具 | A tool for solving SNI RST (github.com)](https://github.com/URenko/Accesser)查看
+
+### 1. 我在局域网的其它设备中搭建了使用项目，我该如何应用到其他平台？
+-  在Accesser运行根目录创建一个名为pac且不带后缀的文件。
+```js
+var domains = {
+  "apkmirror.com": 1,
+  "appledaily.com": 1,
+  "archiveofourown.org": 1,
+  "artstation.com": 1,
+  "bbc.com": 1,
+  "disqus.com": 1,
+  "dmc.nico": 1,
+  "dropbox.com": 1,
+  "dropboxapi.com": 1,
+  "dropbox-dns.com": 1,
+  "dw.com": 1,
+  "e-hentai.org": 1,
+  "epochtimes.com": 1,
+  "euronews.com": 1,
+  "exhentai.org": 1,
+  "ftchinese.com": 1,
+  "github.com": 1,
+  "githubassets.com": 1,
+  "githubusercontent.com": 1,
+  "imgur.com": 1,
+  "instagram.com": 1,
+  "i.pximg.net": 1,
+  "kobo.com": 1,
+  "medium.com": 1,
+  "mega.nz": 1,
+  "nicovideo.jp": 1,
+  "nyaa.si": 1,
+  "nytimes.com": 1,
+  "phncdn.com": 1,
+  "pinterest.com": 1,
+  "pixiv.net": 1,
+  "pornhub.com": 1,
+  "quora.com": 1,
+  "redd.it": 1,
+  "reddit.com": 1,
+  "redditmedia.com": 1,
+  "redditstatic.com":1,
+  "startpage.com": 1,
+  "steamcommunity.com": 1,
+  "theepochtimes.com": 1,
+  "thetvdb.com": 1,
+  "tumblr.com": 1,
+  "tumblr.co": 1,
+  "uptodown.com": 1,
+  "vimeo.com": 1,
+  "wenxuecity.com": 1,
+  "store.steampowered.com": 1,
+  "wikipedia.org": 1
+};
+
+var shexps = {
+  "*://api.openai.com/*": 1,
+  "*://steamcommunity-a.akamaihd.net/*": 1,
+  "*://steamuserimages-a.akamaihd.net/*": 1,
+  "*://*.amazon.co.jp/*": 1,
+  "*://*onedrive.live.com/*": 1,
+  "*://*.bbc.co.uk/*": 1,
+  "*://*.bbci.co.uk/*": 1,
+  "*://*.japantimes.co.jp/*": 1,
+  "*://*.yahoo.co.jp/*": 1,
+  "*://*.cna.com.tw/*": 1,
+  "*://*.discord.com/*": 1,
+  "*://*.discordapp.com/*": 1,
+  "*://*.discord.gg/*": 1,
+  "*://media.discordapp.net/*": 1,
+  "*://*.duckduckgo.com/*": 1,
+  "*://*.v2ex.com/*":1,
+  "*://*.twitch.tv/*":1
+};
+
+var proxy = "PROXY 192.168.1.3:7654;";
+
+var direct = 'DIRECT;';
+
+var hasOwnProperty = Object.hasOwnProperty;
+
+function shExpMatchs(str, shexps) {
+    for (shexp in shexps) {
+        if (shExpMatch(str, shexp)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function FindProxyForURL(url, host) {
+    var suffix;
+    var pos = host.lastIndexOf('.');
+    pos = host.lastIndexOf('.', pos - 1);
+    while(1) {
+        if (pos <= 0) {
+            if (hasOwnProperty.call(domains, host)) {
+                return proxy;
+            } else if (shExpMatchs(url, shexps)) {
+                return proxy;
+            } else {
+                return direct;
+            }
+        }
+        suffix = host.substring(pos + 1);
+        if (hasOwnProperty.call(domains, suffix)) {
+            return proxy;
+        }
+        pos = host.lastIndexOf('.', pos - 1);
+    }
+}
+
+```
+- 将pac文件中的"192.168.1.3:7654"指向你局域网中正在使用此项目的服务器的IP和端口。
+
+### 证书问题、不安全的站点
+- 请到此项目原作者写的的[FAQ · URenko/Accesser Wiki (github.com)](https://github.com/URenko/Accesser/wiki/FAQ)中查看
