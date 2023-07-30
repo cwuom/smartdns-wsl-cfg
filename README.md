@@ -401,7 +401,7 @@ wsl --set-version <distribution name> 1
 ## 绕过SNI阻断
 这里只是常见问题，更多信息请前往[URenko/Accesser: 🌏一个解决SNI RST导致维基百科、Pixiv等站点无法访问的工具 | A tool for solving SNI RST (github.com)](https://github.com/URenko/Accesser)查看
 
-### 1. 我在局域网的其它设备中搭建了使用项目，我该如何应用到其他平台？
+### 1. 我在局域网的其它设备中搭建了此项目，我该如何应用到除这个设备外的的平台？
 -  在Accesser运行根目录创建一个名为pac且不带后缀的文件。
 ```js
 var domains = {
@@ -514,6 +514,7 @@ function FindProxyForURL(url, host) {
 
 ```
 - 将pac文件中的"192.168.1.3:7654"指向你局域网中正在使用此项目的服务器的IP和端口。
+- 在另一个设备中安装证书，并在代理中启用"使用设置脚本"，并输入目标服务器IP和端口
 
 ### 证书问题、不安全的站点
 - 请到此项目原作者写的的[FAQ · URenko/Accesser Wiki (github.com)](https://github.com/URenko/Accesser/wiki/FAQ)中查看
